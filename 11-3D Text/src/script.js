@@ -17,44 +17,72 @@ const canvas = document.querySelector('canvas.webgl');
 // Scene
 const scene = new THREE.Scene();
 
+// Axes Helper
+// const axesHelper = new THREE.AxesHelper();
+// scene.add(axesHelper);
+
 /**
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
+const matcapTexture = textureLoader.load('/textures/matcaps/8.png');
 
 /**
  * Fonts
  */
 const fontLoader = new FontLoader();
-fontLoader.load('fonts/helvetiker_regular.typeface.json', () => {
-	const textGeometry = new TextGeometry('Hello World', {
-		font,
-		size: 1,
-		height: 0.1,
-		curveSegments: 12,
+fontLoader.load('/fonts/helvetiker_regular.typeface.json', (font) => {
+	const textGeometry = new TextGeometry('Hello Three.js', {
+		font: font,
+		size: 0.5,
+		height: 0.2,
+		curveSegments: 5,
 		bevelEnabled: true,
-		bevelThickness: 0.1,
-		bevelSize: 0.1,
-		bevelSegments: 5,
+		bevelThickness: 0.03,
+		bevelSize: 0.02,
+		bevelOffset: 0.0,
+		bevelSegments: 4,
 	});
-	const textMaterial = new THREE.MeshBasicMaterial({
-		color: 0xffffff,
-		map: textureLoader.load('textures/helvetiker_regular.png'),
-	});
-	const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-	textMesh.position.set(0, 0, 0);
+
+	// textGeometry.computeBoundingBox();
+	// textGeometry.translate(
+	// 	-0.5 * (textGeometry.boundingBox.max.x - 0.02),
+	// 	-0.5 * (textGeometry.boundingBox.max.y - 0.02),
+	// 	-0.5 * (textGeometry.boundingBox.max.z - 0.03)
+	// );
+	textGeometry.center();
+
+	const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+	const textMesh = new THREE.Mesh(textGeometry, material);
 	scene.add(textMesh);
+
+	const donutGeometry = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45);
+
+	for (let i = 0; i < 230; i++) {
+		const donutMesh = new THREE.Mesh(donutGeometry, material);
+		donutMesh.position.x = (Math.random() - 0.5) * 10;
+		donutMesh.position.y = (Math.random() - 0.5) * 10;
+		donutMesh.position.z = (Math.random() - 0.5) * 10;
+
+		donutMesh.rotation.x = Math.random() * Math.PI;
+		donutMesh.rotation.y = Math.random() * Math.PI;
+
+		const scale = Math.random();
+		donutMesh.scale.set(scale, scale, scale);
+
+		scene.add(donutMesh);
+	}
 });
 
 /**
  * Object
  */
-const cube = new THREE.Mesh(
-	new THREE.BoxGeometry(1, 1, 1),
-	new THREE.MeshBasicMaterial()
-);
+// const cube = new THREE.Mesh(
+// 	new THREE.BoxGeometry(1, 1, 1),
+// 	new THREE.MeshBasicMaterial()
+// );
 
-scene.add(cube);
+// scene.add(cube);
 
 /**
  * Sizes
